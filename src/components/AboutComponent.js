@@ -1,12 +1,15 @@
 import React from 'react';
 import { Breadcrumb, BreadcrumbItem, Card, CardBody, CardHeader, Media } from 'reactstrap';
 import { Link } from 'react-router-dom';
+import { Loading } from './LoadingComponent'
+import { baseUrl } from '../shared/baseUrl'
+import { Stagger, Fade } from 'react-animation-components'
 
 function RenderLeader({leader}) {
   return(
     <Media key={leader.id} tag='li' className='mt-5'>
       <Media left middle>
-        <Media object src={leader.image} alt={leader.name} />
+        <Media object src={baseUrl + leader.image} alt={leader.name} />
       </Media>
       <Media body className='ml-5'>
         <Media heading>
@@ -19,13 +22,43 @@ function RenderLeader({leader}) {
   )
 }
 
-function About(props) {
-
-  const leaders = props.leaders.map((leader) => {
+function LeaderList({leaders}) {
+  if (leaders.isLoading) {
     return (
-      <p>Leader {leader.name}</p>
-    );
-  });
+      <div className='container'>
+        <div className='row'>
+          <Loading />
+        </div>
+      </div>
+    )
+  } else if (leaders.errMess) {
+    return (
+      <div className='container'>
+        <div className='row'>
+          <h4>{leaders.errMess}</h4>
+        </div>
+      </div>
+    )
+  } else if (leaders.leaders != null) {
+    return (
+      <div className="col-12">
+        <Media list>
+          <Stagger in >
+              {leaders.leaders.map((leader) => {
+                return (
+                  <Fade in>
+                    <RenderLeader leader={leader} />
+                  </Fade>
+                )
+              })}
+          </Stagger>
+        </Media>
+      </div>
+    )
+  }
+}
+
+function About(props) {
 
   return (
     <div className="container">
@@ -81,15 +114,8 @@ function About(props) {
         <div className="col-12">
           <h2>Corporate Leadership</h2>
         </div>
-        <div className="col-12">
-          <Media list>
-            {props.leaders.map((leader) => {
-              return ( 
-                <RenderLeader leader={leader} />
-              )
-            })}
-          </Media>
-        </div>
+
+        <LeaderList leaders={props.leaders} />
       </div>
     </div>
   );
