@@ -23,7 +23,7 @@ export default class CommentForm extends Component {
   }
 
   handleSubmit(values) {
-    this.props.addComment(this.props.dishId, values.rating, values.name, values.comment)
+    this.props.postComment(this.props.dishId, values.rating, values.name, values.comment)
     this.toggleModal()
     // event.preventDefault();
   }
